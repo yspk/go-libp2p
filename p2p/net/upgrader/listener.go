@@ -3,6 +3,7 @@ package upgrader
 import (
 	"context"
 	"fmt"
+	"github.com/libp2p/go-libp2p/p2p/transport/tcp"
 	"sync"
 
 	"github.com/libp2p/go-libp2p-core/network"
@@ -118,7 +119,12 @@ func (l *listener) handleIncoming() {
 			ctx, cancel := context.WithTimeout(l.ctx, l.upgrader.acceptTimeout)
 			defer cancel()
 
-			conn, err := l.upgrader.Upgrade(ctx, l.transport, maconn, network.DirInbound, "", connScope)
+			c, err := tcp.NewTracingConn(maconn, false)
+			if err != nil {
+				connScope.Done()
+				return
+			}
+			conn, err := l.upgrader.Upgrade(ctx, l.transport, c, network.DirInbound, "", connScope)
 			if err != nil {
 				// Don't bother bubbling this up. We just failed
 				// to completely negotiate the connection.

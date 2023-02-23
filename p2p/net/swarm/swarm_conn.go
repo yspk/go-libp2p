@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/mikioh/tcpinfo"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -250,4 +251,8 @@ func (c *Conn) GetStreams() []network.Stream {
 
 func (c *Conn) Scope() network.ConnScope {
 	return c.conn.Scope()
+}
+
+func (c *Conn) GetTCPInfo() (*tcpinfo.Info, error) {
+	return c.conn.GetTCPInfo()
 }

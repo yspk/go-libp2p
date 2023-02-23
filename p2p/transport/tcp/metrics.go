@@ -61,7 +61,7 @@ type aggregatingCollector struct {
 
 	mutex                sync.Mutex
 	highestID            uint64
-	conns                map[uint64] /* id */ *tracingConn
+	conns                map[uint64] /* id */ *TracingConn
 	rtts                 prometheus.Histogram
 	connDurations        prometheus.Histogram
 	segsSent, segsRcvd   uint64
@@ -72,7 +72,7 @@ var _ prometheus.Collector = &aggregatingCollector{}
 
 func newAggregatingCollector() *aggregatingCollector {
 	c := &aggregatingCollector{
-		conns: make(map[uint64]*tracingConn),
+		conns: make(map[uint64]*TracingConn),
 		rtts: prometheus.NewHistogram(prometheus.HistogramOpts{
 			Name:    "tcp_rtt",
 			Help:    "TCP round trip time",
@@ -87,7 +87,7 @@ func newAggregatingCollector() *aggregatingCollector {
 	return c
 }
 
-func (c *aggregatingCollector) AddConn(t *tracingConn) uint64 {
+func (c *aggregatingCollector) AddConn(t *TracingConn) uint64 {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	c.highestID++
@@ -130,7 +130,7 @@ func (c *aggregatingCollector) gatherMetrics(now time.Time) {
 	c.bytesSent = 0
 	c.bytesRcvd = 0
 	for _, conn := range c.conns {
-		info, err := conn.getTCPInfo()
+		info, err := conn.GetTCPInfo()
 		if err != nil {
 			if strings.Contains(err.Error(), "use of closed network connection") {
 				continue
@@ -193,14 +193,14 @@ func (c *aggregatingCollector) Collect(metrics chan<- prometheus.Metric) {
 	}
 }
 
-func (c *aggregatingCollector) ClosedConn(conn *tracingConn, direction string) {
+func (c *aggregatingCollector) ClosedConn(conn *TracingConn, direction string) {
 	c.mutex.Lock()
 	collector.removeConn(conn.id)
 	c.mutex.Unlock()
 	closedConns.WithLabelValues(direction).Inc()
 }
 
-type tracingConn struct {
+type TracingConn struct {
 	id uint64
 
 	startTime time.Time
@@ -210,12 +210,12 @@ type tracingConn struct {
 	tcpConn *tcp.Conn
 }
 
-func newTracingConn(c manet.Conn, isClient bool) (*tracingConn, error) {
+func NewTracingConn(c manet.Conn, isClient bool) (*TracingConn, error) {
 	conn, err := tcp.NewConn(c)
 	if err != nil {
 		return nil, err
 	}
-	tc := &tracingConn{
+	tc := &TracingConn{
 		startTime: time.Now(),
 		isClient:  isClient,
 		Conn:      c,
@@ -226,19 +226,19 @@ func newTracingConn(c manet.Conn, isClient bool) (*tracingConn, error) {
 	return tc, nil
 }
 
-func (c *tracingConn) getDirection() string {
+func (c *TracingConn) getDirection() string {
 	if c.isClient {
 		return "outgoing"
 	}
 	return "incoming"
 }
 
-func (c *tracingConn) Close() error {
+func (c *TracingConn) Close() error {
 	collector.ClosedConn(c, c.getDirection())
 	return c.Conn.Close()
 }
 
-func (c *tracingConn) getTCPInfo() (*tcpinfo.Info, error) {
+func (c *TracingConn) GetTCPInfo() (*tcpinfo.Info, error) {
 	var o tcpinfo.Info
 	var b [256]byte
 	i, err := c.tcpConn.Option(o.Level(), o.Name(), b[:])
@@ -262,5 +262,5 @@ func (l *tracingListener) Accept() (manet.Conn, error) {
 	if err != nil {
 		return nil, err
 	}
-	return newTracingConn(conn, false)
+	return NewTracingConn(conn, false)
 }

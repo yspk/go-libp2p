@@ -2,6 +2,9 @@ package libp2pquic
 
 import (
 	"context"
+	"errors"
+	"github.com/libp2p/go-libp2p/p2p/transport/tcp"
+	"github.com/mikioh/tcpinfo"
 
 	ic "github.com/libp2p/go-libp2p-core/crypto"
 	"github.com/libp2p/go-libp2p-core/network"
@@ -25,6 +28,7 @@ type conn struct {
 	remotePeerID    peer.ID
 	remotePubKey    ic.PubKey
 	remoteMultiaddr ma.Multiaddr
+	tconn           *tcp.TracingConn
 }
 
 var _ tpt.CapableConn = &conn{}
@@ -97,4 +101,11 @@ func (c *conn) Transport() tpt.Transport {
 
 func (c *conn) Scope() network.ConnScope {
 	return c.scope
+}
+
+func (c *conn) GetTCPInfo() (*tcpinfo.Info, error) {
+	if c.tconn != nil {
+		return c.tconn.GetTCPInfo()
+	}
+	return nil, errors.New("no tconn")
 }

@@ -3,11 +3,10 @@ package libp2p
 import (
 	"context"
 	"fmt"
+	"github.com/libp2p/go-libp2p/p2p/transport/tcp"
 	"regexp"
 	"strings"
 	"testing"
-
-	"github.com/libp2p/go-libp2p/p2p/transport/tcp"
 
 	"github.com/libp2p/go-libp2p-core/connmgr"
 	"github.com/libp2p/go-libp2p-core/crypto"

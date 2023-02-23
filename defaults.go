@@ -4,13 +4,13 @@ package libp2p
 
 import (
 	"crypto/rand"
+	"github.com/libp2p/go-libp2p/p2p/transport/tcp"
 
 	"github.com/libp2p/go-libp2p/p2p/muxer/yamux"
 	"github.com/libp2p/go-libp2p/p2p/net/connmgr"
 	"github.com/libp2p/go-libp2p/p2p/security/noise"
 	tls "github.com/libp2p/go-libp2p/p2p/security/tls"
 	quic "github.com/libp2p/go-libp2p/p2p/transport/quic"
-	"github.com/libp2p/go-libp2p/p2p/transport/tcp"
 	ws "github.com/libp2p/go-libp2p/p2p/transport/websocket"
 
 	"github.com/libp2p/go-libp2p-core/crypto"

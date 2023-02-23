@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/libp2p/go-libp2p/p2p/transport/tcp"
 	"sync"
 	"testing"
 	"time"
@@ -13,7 +14,6 @@ import (
 	csms "github.com/libp2p/go-libp2p/p2p/net/conn-security-multistream"
 	tptu "github.com/libp2p/go-libp2p/p2p/net/upgrader"
 	quic "github.com/libp2p/go-libp2p/p2p/transport/quic"
-	"github.com/libp2p/go-libp2p/p2p/transport/tcp"
 
 	"github.com/libp2p/go-libp2p-core/peerstore"
 	"github.com/libp2p/go-libp2p-core/sec/insecure"

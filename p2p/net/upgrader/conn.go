@@ -2,6 +2,7 @@ package upgrader
 
 import (
 	"fmt"
+	"github.com/mikioh/tcpinfo"
 
 	"github.com/libp2p/go-libp2p-core/mux"
 	"github.com/libp2p/go-libp2p-core/network"
@@ -15,6 +16,7 @@ type transportConn struct {
 	transport transport.Transport
 	scope     network.ConnManagementScope
 	stat      network.ConnStats
+	tconn     transport.TracingConn
 }
 
 var _ transport.CapableConn = &transportConn{}
@@ -49,4 +51,8 @@ func (t *transportConn) Scope() network.ConnScope {
 func (t *transportConn) Close() error {
 	defer t.scope.Done()
 	return t.MuxedConn.Close()
+}
+
+func (t *transportConn) GetTCPInfo() (*tcpinfo.Info, error) {
+	return t.tconn.GetTCPInfo()
 }

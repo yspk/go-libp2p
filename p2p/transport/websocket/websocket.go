@@ -4,6 +4,9 @@ package websocket
 import (
 	"context"
 	"crypto/tls"
+	"errors"
+	"github.com/libp2p/go-libp2p/p2p/transport/tcp"
+	"github.com/mikioh/tcpinfo"
 	"net/http"
 	"time"
 
@@ -68,6 +71,7 @@ type WebsocketTransport struct {
 
 	tlsClientConf *tls.Config
 	tlsConf       *tls.Config
+	tconn         transport.TracingConn
 }
 
 var _ transport.Transport = (*WebsocketTransport)(nil)
@@ -110,7 +114,13 @@ func (t *WebsocketTransport) Dial(ctx context.Context, raddr ma.Multiaddr, p pee
 		connScope.Done()
 		return nil, err
 	}
-	return t.upgrader.Upgrade(ctx, t, macon, network.DirOutbound, p, connScope)
+	c, err := tcp.NewTracingConn(macon, false)
+	if err != nil {
+		connScope.Done()
+		return nil, err
+	}
+	t.tconn = c
+	return t.upgrader.Upgrade(ctx, t, c, network.DirOutbound, p, connScope)
 }
 
 func (t *WebsocketTransport) maDial(ctx context.Context, raddr ma.Multiaddr) (manet.Conn, error) {
@@ -152,4 +162,11 @@ func (t *WebsocketTransport) Listen(a ma.Multiaddr) (transport.Listener, error) 
 		return nil, err
 	}
 	return t.upgrader.UpgradeListener(t, malist), nil
+}
+
+func (t *WebsocketTransport) GetTCPInfo() (*tcpinfo.Info, error) {
+	if t.tconn != nil {
+		return t.tconn.GetTCPInfo()
+	}
+	return nil, errors.New("no tconn")
 }

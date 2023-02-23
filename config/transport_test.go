@@ -1,9 +1,8 @@
 package config
 
 import (
-	"testing"
-
 	"github.com/libp2p/go-libp2p/p2p/transport/tcp"
+	"testing"
 
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/libp2p/go-libp2p-core/transport"

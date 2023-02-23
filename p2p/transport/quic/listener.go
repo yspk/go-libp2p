@@ -140,6 +140,7 @@ func (l *listener) setupConn(qconn quic.Connection) (*conn, error) {
 		remoteMultiaddr: remoteMultiaddr,
 		remotePeerID:    remotePeerID,
 		remotePubKey:    remotePubKey,
+		tconn:           nil,
 	}, nil
 }
 

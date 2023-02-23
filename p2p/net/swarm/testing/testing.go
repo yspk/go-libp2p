@@ -1,6 +1,7 @@
 package testing
 
 import (
+	"github.com/libp2p/go-libp2p/p2p/transport/tcp"
 	"testing"
 	"time"
 
@@ -10,7 +11,6 @@ import (
 	"github.com/libp2p/go-libp2p/p2p/net/swarm"
 	tptu "github.com/libp2p/go-libp2p/p2p/net/upgrader"
 	quic "github.com/libp2p/go-libp2p/p2p/transport/quic"
-	"github.com/libp2p/go-libp2p/p2p/transport/tcp"
 
 	"github.com/libp2p/go-libp2p-core/connmgr"
 	"github.com/libp2p/go-libp2p-core/control"

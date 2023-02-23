@@ -113,7 +113,7 @@ func (u *upgrader) UpgradeListener(t transport.Transport, list manet.Listener) t
 }
 
 // Upgrade upgrades the multiaddr/net connection into a full libp2p-transport connection.
-func (u *upgrader) Upgrade(ctx context.Context, t transport.Transport, maconn manet.Conn, dir network.Direction, p peer.ID, connScope network.ConnManagementScope) (transport.CapableConn, error) {
+func (u *upgrader) Upgrade(ctx context.Context, t transport.Transport, maconn transport.TracingConn, dir network.Direction, p peer.ID, connScope network.ConnManagementScope) (transport.CapableConn, error) {
 	c, err := u.upgrade(ctx, t, maconn, dir, p, connScope)
 	if err != nil {
 		connScope.Done()
@@ -122,7 +122,7 @@ func (u *upgrader) Upgrade(ctx context.Context, t transport.Transport, maconn ma
 	return c, nil
 }
 
-func (u *upgrader) upgrade(ctx context.Context, t transport.Transport, maconn manet.Conn, dir network.Direction, p peer.ID, connScope network.ConnManagementScope) (transport.CapableConn, error) {
+func (u *upgrader) upgrade(ctx context.Context, t transport.Transport, maconn transport.TracingConn, dir network.Direction, p peer.ID, connScope network.ConnManagementScope) (transport.CapableConn, error) {
 	if dir == network.DirOutbound && p == "" {
 		return nil, ErrNilPeer
 	}
@@ -184,6 +184,7 @@ func (u *upgrader) upgrade(ctx context.Context, t transport.Transport, maconn ma
 		transport:      t,
 		stat:           stat,
 		scope:          connScope,
+		tconn:          maconn,
 	}
 	return tc, nil
 }

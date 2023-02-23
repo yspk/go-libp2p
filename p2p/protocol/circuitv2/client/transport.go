@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"github.com/libp2p/go-libp2p/p2p/transport/tcp"
 	"io"
 
 	"github.com/libp2p/go-libp2p-core/network"
@@ -64,7 +65,12 @@ func (c *Client) Dial(ctx context.Context, a ma.Multiaddr, p peer.ID) (transport
 		return nil, err
 	}
 	conn.tagHop()
-	return c.upgrader.Upgrade(ctx, c, conn, network.DirOutbound, p, connScope)
+	tc, err := tcp.NewTracingConn(conn, true)
+	if err != nil {
+		connScope.Done()
+		return nil, err
+	}
+	return c.upgrader.Upgrade(ctx, c, tc, network.DirOutbound, p, connScope)
 }
 
 func (c *Client) CanDial(addr ma.Multiaddr) bool {
