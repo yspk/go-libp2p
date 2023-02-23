@@ -21,7 +21,7 @@ require (
 	github.com/libp2p/go-eventbus v0.2.1
 	github.com/libp2p/go-libp2p-asn-util v0.2.0
 	github.com/libp2p/go-libp2p-circuit v0.6.0
-	github.com/yspk/go-libp2p-core beacon
+	github.com/libp2p/go-libp2p-core v0.17.0
 	github.com/libp2p/go-libp2p-peerstore v0.6.0
 	github.com/libp2p/go-libp2p-resource-manager v0.3.0
 	github.com/libp2p/go-libp2p-testing v0.9.2
@@ -119,3 +119,5 @@ require (
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 	lukechampine.com/blake3 v1.1.6 // indirect
 )
+
+replace github.com/libp2p/go-libp2p-core v0.17.0 => github.com/yspk/go-libp2p-core v0.0.0-20230223041119-9f0e9a233cc7
