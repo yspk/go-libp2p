@@ -213,6 +213,13 @@ type TracingConn struct {
 func NewTracingConn(c manet.Conn, isClient bool) (*TracingConn, error) {
 	conn, err := tcp.NewConn(c)
 	if err != nil {
+		//return nil, err
+		switch cl := c.(type) {
+		//case *net.:
+		//	log.Id("NewTCPConn Ok")
+		default:
+			log.Info("NewTCPConn", "err", err, "type", cl)
+		}
 		return nil, err
 	}
 	tc := &TracingConn{
