@@ -190,11 +190,11 @@ func (t *TcpTransport) Dial(ctx context.Context, raddr ma.Multiaddr, p peer.ID) 
 	// This means we can immediately reuse the 5-tuple and reconnect.
 	tryLinger(conn, 0)
 	tryKeepAlive(conn, true)
-	c, err := NewTracingConn(conn, true)
-	if err != nil {
-		connScope.Done()
-		return nil, err
-	}
+	c, _ := NewTracingConn(conn, true)
+	//if err != nil {
+	//	connScope.Done()
+	//	return nil, err
+	//}
 	direction := network.DirOutbound
 	if ok, isClient, _ := network.GetSimultaneousConnect(ctx); ok && !isClient {
 		direction = network.DirInbound

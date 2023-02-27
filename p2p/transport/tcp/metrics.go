@@ -4,6 +4,7 @@
 package tcp
 
 import (
+	"errors"
 	"strings"
 	"sync"
 	"time"
@@ -212,25 +213,18 @@ type TracingConn struct {
 
 func NewTracingConn(c manet.Conn, isClient bool) (*TracingConn, error) {
 	conn, err := tcp.NewConn(c)
-	if err != nil {
-		//return nil, err
-		switch cl := c.(type) {
-		//case *net.:
-		//	log.Id("NewTCPConn Ok")
-		default:
-			log.Info("NewTCPConn", "err", err, "type", cl)
-		}
-		return nil, err
-	}
+	//if err != nil {
+	//	return nil, err
+	//}
 	tc := &TracingConn{
 		startTime: time.Now(),
 		isClient:  isClient,
 		Conn:      c,
 		tcpConn:   conn,
 	}
-	tc.id = collector.AddConn(tc)
-	newConns.WithLabelValues(tc.getDirection()).Inc()
-	return tc, nil
+	//tc.id = collector.AddConn(tc)
+	//newConns.WithLabelValues(tc.getDirection()).Inc()
+	return tc, err
 }
 
 func (c *TracingConn) getDirection() string {
@@ -246,6 +240,13 @@ func (c *TracingConn) Close() error {
 }
 
 func (c *TracingConn) GetTCPInfo() (*tcpinfo.Info, error) {
+	if c.tcpConn == nil {
+		conn, err := tcp.NewConn(c.Conn)
+		if err != nil {
+			return nil, errors.New("un support connect")
+		}
+		c.tcpConn = conn
+	}
 	var o tcpinfo.Info
 	var b [256]byte
 	i, err := c.tcpConn.Option(o.Level(), o.Name(), b[:])
@@ -265,9 +266,11 @@ func newTracingListener(l manet.Listener) *tracingListener {
 }
 
 func (l *tracingListener) Accept() (manet.Conn, error) {
-	conn, err := l.Listener.Accept()
-	if err != nil {
-		return nil, err
-	}
-	return NewTracingConn(conn, false)
+	return l.Listener.Accept()
+	//conn, err := l.Listener.Accept()
+	//if err != nil {
+	//	return nil, err
+	//}
+	//return conn, nil
+	//return NewTracingConn(conn, false)
 }

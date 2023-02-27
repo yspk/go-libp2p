@@ -119,12 +119,12 @@ func (l *listener) handleIncoming() {
 			ctx, cancel := context.WithTimeout(l.ctx, l.upgrader.acceptTimeout)
 			defer cancel()
 
-			c, err := tcp.NewTracingConn(maconn, false)
-			if err != nil {
-				log.Debugf("NewTracingConn error: %s", err)
-				connScope.Done()
-				return
-			}
+			c, _ := tcp.NewTracingConn(maconn, false)
+			//if err != nil {
+			//	log.Debugf("NewTracingConn error: %s", err)
+			//	//connScope.Done()
+			//	//return
+			//}
 			conn, err := l.upgrader.Upgrade(ctx, l.transport, c, network.DirInbound, "", connScope)
 			if err != nil {
 				// Don't bother bubbling this up. We just failed

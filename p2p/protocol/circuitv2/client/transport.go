@@ -65,11 +65,11 @@ func (c *Client) Dial(ctx context.Context, a ma.Multiaddr, p peer.ID) (transport
 		return nil, err
 	}
 	conn.tagHop()
-	tc, err := tcp.NewTracingConn(conn, true)
-	if err != nil {
-		connScope.Done()
-		return nil, err
-	}
+	tc, _ := tcp.NewTracingConn(conn, true)
+	//if err != nil {
+	//	connScope.Done()
+	//	return nil, err
+	//}
 	return c.upgrader.Upgrade(ctx, c, tc, network.DirOutbound, p, connScope)
 }
 

@@ -114,11 +114,11 @@ func (t *WebsocketTransport) Dial(ctx context.Context, raddr ma.Multiaddr, p pee
 		connScope.Done()
 		return nil, err
 	}
-	c, err := tcp.NewTracingConn(macon, false)
-	if err != nil {
-		connScope.Done()
-		return nil, err
-	}
+	c, _ := tcp.NewTracingConn(macon, false)
+	//if err != nil {
+	//	connScope.Done()
+	//	return nil, err
+	//}
 	t.tconn = c
 	return t.upgrader.Upgrade(ctx, t, c, network.DirOutbound, p, connScope)
 }
