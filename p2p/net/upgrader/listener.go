@@ -121,6 +121,7 @@ func (l *listener) handleIncoming() {
 
 			c, err := tcp.NewTracingConn(maconn, false)
 			if err != nil {
+				log.Debugf("NewTracingConn error: %s", err)
 				connScope.Done()
 				return
 			}
